@@ -1,1353 +1,313 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AttendX — Smart Attendance System</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,560;9..144,650&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-
-    <style>
-      :root {
-        --bg: #0d1511;
-        --bg2: #08100c;
-
-        --ink: #eee8da;
-        --muted: #9aa698;
-        --muted2: #697568;
-
-        --brass: #c5a044;
-        --brass2: #dfc36d;
-
-        --oxblood: #963c2d;
-        --sage: #789776;
-
-        --panel: #131d17;
-        --panel2: #18231b;
-
-        --line: rgba(238, 232, 218, 0.095);
-        --line2: rgba(238, 232, 218, 0.16);
-
-        --font-display: "Fraunces", Georgia, serif;
-        --font-mono: "JetBrains Mono", monospace;
-        --font-body: "Inter", system-ui, sans-serif;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: var(--font-body);
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        min-height: 100vh;
-        overflow-x: hidden;
-        color: var(--ink);
-
-        background:
-          radial-gradient(
-            circle at 10% 0%,
-            rgba(197, 160, 68, 0.065),
-            transparent 30%
-          ),
-          radial-gradient(
-            circle at 100% 45%,
-            rgba(150, 60, 45, 0.045),
-            transparent 28%
-          ),
-          linear-gradient(145deg, var(--bg), var(--bg2));
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.035;
-
-        background-image:
-          linear-gradient(
-            rgba(238, 232, 218, 0.045) 1px,
-            transparent 1px
-          ),
-          linear-gradient(
-            90deg,
-            rgba(238, 232, 218, 0.045) 1px,
-            transparent 1px
-          );
-
-        background-size: 64px 64px;
-
-        mask-image: linear-gradient(
-          to bottom,
-          black,
-          transparent 80%
-        );
-
-        z-index: -2;
-      }
-
-      a {
-        color: inherit;
-      }
-
-      button,
-      a {
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      a:focus-visible,
-      button:focus-visible {
-        outline: 2px solid var(--brass2);
-        outline-offset: 3px;
-        border-radius: 6px;
-      }
-
-      /* ------------------------------------------------------------
-         TOP BAR
-      ------------------------------------------------------------ */
-
-      nav {
-        width: min(1240px, calc(100% - 40px));
-        margin: 0 auto;
-
-        padding: 22px 0;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        position: relative;
-        z-index: 5;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-        text-decoration: none;
-      }
-
-      .logo-mark {
-        width: 42px;
-        height: 42px;
-
-        display: grid;
-        place-items: center;
-
-        border-radius: 50%;
-
-        color: #10180f;
-
-        font-family: var(--font-display);
-        font-size: 1.15rem;
-        font-weight: 650;
-
-        background: var(--brass);
-
-        box-shadow:
-          inset 0 1px rgba(255, 255, 255, 0.28),
-          0 5px 25px rgba(0, 0, 0, 0.25);
-      }
-
-      .brand-text {
-        font-family: var(--font-display);
-        font-size: 1.48rem;
-        font-weight: 560;
-        letter-spacing: -0.5px;
-      }
-
-      .brand-text span {
-        color: var(--oxblood);
-      }
-
-      .nav-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .terminal-chip {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        padding: 8px 11px;
-
-        border: 1px solid var(--line);
-        border-radius: 4px;
-
-        background: rgba(19, 29, 23, 0.8);
-
-        color: #9ca99a;
-
-        font-family: var(--font-mono);
-        font-size: 0.64rem;
-        letter-spacing: 0.5px;
-      }
-
-      .pulse-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--sage);
-      }
-
-      /* ------------------------------------------------------------
-         MAIN
-      ------------------------------------------------------------ */
-
-      .hero {
-        width: min(1240px, calc(100% - 40px));
-        min-height: calc(100vh - 78px);
-
-        margin: 0 auto;
-        padding: 55px 0 70px;
-
-        display: grid;
-        grid-template-columns:
-          minmax(0, 1.02fr)
-          minmax(400px, 0.98fr);
-
-        gap: 60px;
-        align-items: center;
-      }
-
-      .copy {
-        position: relative;
-        z-index: 2;
-      }
-
-      .overline {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-
-        padding: 7px 10px;
-
-        border: 1px solid rgba(197, 160, 68, 0.25);
-        border-radius: 3px;
-
-        background: rgba(197, 160, 68, 0.045);
-
-        color: var(--brass2);
-
-        text-transform: uppercase;
-        letter-spacing: 1.4px;
-
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-      }
-
-      .overline b {
-        color: #c88778;
-      }
-
-      h1 {
-        margin-top: 22px;
-
-        max-width: 800px;
-
-        font-family: var(--font-display);
-        font-size: clamp(3.2rem, 6.3vw, 6.2rem);
-        line-height: 0.94;
-
-        letter-spacing: -2.5px;
-        font-weight: 560;
-      }
-
-      h1 .line2 {
-        display: block;
-        margin-left: 7px;
-        font-style: italic;
-        color: var(--brass2);
-      }
-
-      .lede {
-        max-width: 650px;
-
-        margin-top: 25px;
-
-        color: var(--muted);
-
-        font-size: 0.98rem;
-        line-height: 1.8;
-      }
-
-      .lede strong {
-        color: var(--ink);
-        font-weight: 600;
-      }
-
-      .badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-
-        margin-top: 23px;
-      }
-
-      .badge {
-        padding: 7px 10px;
-
-        border: 1px solid var(--line);
-        border-radius: 3px;
-
-        background: rgba(238, 232, 218, 0.018);
-
-        color: #aeb8aa;
-
-        font-family: var(--font-mono);
-        font-size: 0.64rem;
-        letter-spacing: 0.25px;
-      }
-
-      .badge.brass {
-        color: var(--brass2);
-        border-color: rgba(197, 160, 68, 0.25);
-      }
-
-      .badge.blood {
-        color: #d69b8e;
-        border-color: rgba(150, 60, 45, 0.25);
-      }
-
-      .badge.sage {
-        color: #b4cdb0;
-        border-color: rgba(120, 151, 118, 0.25);
-      }
-
-      /* ------------------------------------------------------------
-         PORTALS
-      ------------------------------------------------------------ */
-
-      .portal-grid {
-        margin-top: 34px;
-
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 13px;
-      }
-
-      .portal {
-        min-height: 235px;
-
-        position: relative;
-        overflow: hidden;
-
-        padding: 22px;
-
-        border: 1px solid var(--line);
-        border-radius: 9px;
-
-        text-decoration: none;
-
-        background:
-          linear-gradient(
-            145deg,
-            rgba(25, 37, 29, 0.96),
-            rgba(12, 18, 13, 0.98)
-          );
-
-        transition:
-          transform 180ms ease,
-          border-color 180ms ease,
-          background 180ms ease;
-      }
-
-      .portal::after {
-        content: "";
-
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-
-        height: 2px;
-
-        background: var(--brass);
-
-        transform: scaleX(0);
-        transform-origin: left;
-
-        transition: transform 180ms ease;
-      }
-
-      .portal.blood::after {
-        background: var(--oxblood);
-      }
-
-      .portal:hover {
-        transform: translateY(-4px);
-
-        border-color: var(--line2);
-
-        background:
-          linear-gradient(
-            145deg,
-            rgba(29, 42, 32, 0.98),
-            rgba(13, 19, 14, 1)
-          );
-      }
-
-      .portal:hover::after {
-        transform: scaleX(1);
-      }
-
-      .portal-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .portal-icon {
-        width: 50px;
-        height: 50px;
-
-        display: grid;
-        place-items: center;
-
-        border-radius: 50%;
-
-        background: rgba(197, 160, 68, 0.075);
-        border: 1px solid rgba(197, 160, 68, 0.18);
-
-        font-size: 1.35rem;
-      }
-
-      .portal.blood .portal-icon {
-        background: rgba(150, 60, 45, 0.08);
-        border-color: rgba(150, 60, 45, 0.2);
-      }
-
-      .portal-arrow {
-        width: 32px;
-        height: 32px;
-
-        display: grid;
-        place-items: center;
-
-        border: 1px solid var(--line);
-        border-radius: 50%;
-
-        color: #9ba69a;
-
-        transition:
-          transform 180ms ease,
-          color 180ms ease;
-      }
-
-      .portal:hover .portal-arrow {
-        transform: translate(2px, -2px);
-        color: var(--ink);
-      }
-
-      .portal h2 {
-        margin-top: 21px;
-
-        font-family: var(--font-display);
-        font-size: 1.42rem;
-        font-weight: 560;
-        letter-spacing: -0.4px;
-      }
-
-      .portal p {
-        margin-top: 8px;
-
-        max-width: 320px;
-
-        color: var(--muted);
-
-        font-size: 0.84rem;
-        line-height: 1.65;
-      }
-
-      .portal-meta {
-        position: absolute;
-        left: 22px;
-        right: 22px;
-        bottom: 19px;
-
-        display: flex;
-        justify-content: space-between;
-
-        color: var(--brass2);
-
-        font-family: var(--font-mono);
-        font-size: 0.63rem;
-        text-transform: uppercase;
-        letter-spacing: 0.7px;
-      }
-
-      .portal.blood .portal-meta {
-        color: #d69b8e;
-      }
-
-      /* ------------------------------------------------------------
-         CONSOLE
-      ------------------------------------------------------------ */
-
-      .console-wrap {
-        min-height: 610px;
-
-        display: grid;
-        place-items: center;
-
-        position: relative;
-      }
-
-      /* Static decorative ring — no rotation */
-      .orbit {
-        position: absolute;
-
-        width: 490px;
-        height: 490px;
-
-        border: 1px solid rgba(197, 160, 68, 0.09);
-        border-radius: 50%;
-      }
-
-      .orbit::before {
-        content: "";
-
-        position: absolute;
-
-        width: 7px;
-        height: 7px;
-
-        top: 42px;
-        left: 50%;
-
-        transform: translateX(-50%);
-
-        border-radius: 50%;
-
-        background: var(--brass2);
-
-        box-shadow: 0 0 14px rgba(197, 160, 68, 0.35);
-      }
-
-      .console {
-        width: min(100%, 490px);
-
-        position: relative;
-
-        border: 1px solid var(--line2);
-        border-radius: 12px;
-
-        overflow: hidden;
-
-        background:
-          linear-gradient(
-            150deg,
-            #17221a,
-            #0b120d
-          );
-
-        box-shadow:
-          0 30px 70px rgba(0, 0, 0, 0.4),
-          0 1px 0 rgba(255, 255, 255, 0.025);
-      }
-
-      .console-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        padding: 15px 17px;
-
-        border-bottom: 1px solid var(--line);
-
-        background: rgba(255, 255, 255, 0.012);
-      }
-
-      .console-left {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-      }
-
-      .dots {
-        display: flex;
-        gap: 5px;
-      }
-
-      .dots span {
-        width: 6px;
-        height: 6px;
-
-        border-radius: 50%;
-
-        background: #344036;
-      }
-
-      .console-name {
-        color: #899688;
-
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .live {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-
-        color: #b7cdb3;
-
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-        font-weight: 600;
-      }
-
-      .live i {
-        width: 6px;
-        height: 6px;
-
-        border-radius: 50%;
-
-        background: var(--sage);
-      }
-
-      .console-body {
-        padding: 21px;
-      }
-
-      .console-kicker {
-        color: #71806f;
-
-        font-family: var(--font-mono);
-        font-size: 0.6rem;
-
-        text-transform: uppercase;
-        letter-spacing: 1.6px;
-      }
-
-      .console-title {
-        margin-top: 8px;
-
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 10px;
-      }
-
-      .console-title h3 {
-        font-family: var(--font-display);
-        font-size: 1.48rem;
-        font-weight: 560;
-      }
-
-      .session-id {
-        color: #7e8a7c;
-
-        font-family: var(--font-mono);
-        font-size: 0.6rem;
-      }
-
-      .terminal {
-        margin-top: 17px;
-
-        padding: 13px;
-
-        border: 1px solid var(--line);
-        border-radius: 5px;
-
-        background: rgba(0, 0, 0, 0.2);
-
-        font-family: var(--font-mono);
-        font-size: 0.65rem;
-        line-height: 1.8;
-      }
-
-      .term-line {
-        display: flex;
-        gap: 8px;
-      }
-
-      .term-prompt {
-        color: var(--brass2);
-      }
-
-      .term-ok {
-        color: var(--sage);
-      }
-
-      .term-flag {
-        color: #d58d7d;
-      }
-
-      .term-muted {
-        color: #596657;
-      }
-
-      /* ------------------------------------------------------------
-         NETWORK
-      ------------------------------------------------------------ */
-
-      .network {
-        margin-top: 14px;
-
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-      }
-
-      .node {
-        min-height: 75px;
-
-        padding: 11px;
-
-        border: 1px solid var(--line);
-        border-radius: 6px;
-
-        background: rgba(255, 255, 255, 0.014);
-      }
-
-      .node small {
-        display: block;
-
-        color: #71806f;
-
-        font-family: var(--font-mono);
-        font-size: 0.56rem;
-
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .node strong {
-        display: block;
-
-        margin-top: 7px;
-
-        font-family: var(--font-display);
-        font-size: 0.9rem;
-        font-weight: 560;
-      }
-
-      .node em {
-        display: block;
-
-        margin-top: 3px;
-
-        color: #879285;
-
-        font-size: 0.59rem;
-        font-style: normal;
-      }
-
-      .node.active {
-        border-color: rgba(120, 151, 118, 0.19);
-      }
-
-      /* ------------------------------------------------------------
-         ATTENDANCE
-      ------------------------------------------------------------ */
-
-      .attendance {
-        margin-top: 14px;
-
-        padding: 14px;
-
-        border: 1px solid var(--line);
-        border-radius: 7px;
-
-        background: rgba(255, 255, 255, 0.014);
-      }
-
-      .attendance-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .attendance-top span {
-        color: #7b8878;
-
-        font-family: var(--font-mono);
-        font-size: 0.58rem;
-
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .attendance-top b {
-        color: #d6dfd0;
-
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-      }
-
-      .meter {
-        height: 7px;
-
-        margin-top: 11px;
-
-        overflow: hidden;
-
-        border: 1px solid rgba(255, 255, 255, 0.035);
-        border-radius: 99px;
-
-        background: #182219;
-      }
-
-      .meter-fill {
-        width: 87%;
-        height: 100%;
-
-        border-radius: inherit;
-
-        background:
-          linear-gradient(
-            90deg,
-            var(--oxblood),
-            var(--brass),
-            var(--sage)
-          );
-      }
-
-      .mini-metrics {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 7px;
-
-        margin-top: 10px;
-      }
-
-      .metric {
-        padding: 9px 10px;
-
-        border: 1px solid var(--line);
-        border-radius: 5px;
-
-        background: rgba(255, 255, 255, 0.012);
-      }
-
-      .metric span {
-        display: block;
-
-        color: #71806f;
-
-        font-family: var(--font-mono);
-        font-size: 0.55rem;
-
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-      }
-
-      .metric strong {
-        display: block;
-
-        margin-top: 4px;
-
-        font-family: var(--font-display);
-        font-size: 0.98rem;
-      }
-
-      .metric.brass strong {
-        color: var(--brass2);
-      }
-
-      .metric.blood strong {
-        color: #d69b8e;
-      }
-
-      .metric.sage strong {
-        color: #b7d1b2;
-      }
-
-      /* ------------------------------------------------------------
-         FEATURES
-      ------------------------------------------------------------ */
-
-      .features {
-        width: min(1240px, calc(100% - 40px));
-
-        margin: 0 auto;
-        padding: 0 0 30px;
-
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-      }
-
-      .feature {
-        min-height: 64px;
-
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        padding: 13px 15px;
-
-        border: 1px solid var(--line);
-        border-radius: 7px;
-
-        background: rgba(255, 255, 255, 0.014);
-
-        color: #9ba698;
-
-        font-size: 0.76rem;
-
-        transition:
-          border-color 160ms ease,
-          background 160ms ease,
-          transform 160ms ease;
-      }
-
-      .feature:hover {
-        transform: translateY(-2px);
-
-        border-color: var(--line2);
-        background: rgba(255, 255, 255, 0.025);
-      }
-
-      .feature-icon {
-        width: 29px;
-        height: 29px;
-
-        flex: 0 0 auto;
-
-        display: grid;
-        place-items: center;
-
-        border: 1px solid var(--line);
-        border-radius: 50%;
-
-        color: var(--brass2);
-
-        font-family: var(--font-mono);
-      }
-
-      .feature:nth-child(2) .feature-icon {
-        color: #d69b8e;
-      }
-
-      .feature:nth-child(3) .feature-icon {
-        color: #b7d1b2;
-      }
-
-      .feature strong {
-        color: var(--ink);
-        font-weight: 600;
-      }
-
-      /* ------------------------------------------------------------
-         FOOTER
-      ------------------------------------------------------------ */
-
-      footer {
-        width: min(1240px, calc(100% - 40px));
-
-        margin: 0 auto;
-
-        padding: 8px 0 26px;
-
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-
-        color: #647063;
-
-        font-family: var(--font-mono);
-        font-size: 0.64rem;
-      }
-
-      .footer-brand {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .footer-mark {
-        width: 20px;
-        height: 20px;
-
-        display: grid;
-        place-items: center;
-
-        border-radius: 50%;
-
-        background: var(--brass);
-        color: #10180f;
-
-        font-family: var(--font-display);
-        font-size: 0.6rem;
-        font-weight: 650;
-      }
-
-      /* ------------------------------------------------------------
-         RESPONSIVE
-      ------------------------------------------------------------ */
-
-      @media (max-width: 1050px) {
-        .hero {
-          grid-template-columns: 1fr;
-          gap: 45px;
-        }
-
-        .copy {
-          text-align: center;
-        }
-
-        .lede {
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        .badges {
-          justify-content: center;
-        }
-
-        .console-wrap {
-          min-height: 570px;
-        }
-      }
-
-      @media (max-width: 700px) {
-        nav,
-        .hero,
-        .features,
-        footer {
-          width: calc(100% - 26px);
-        }
-
-        nav {
-          padding-top: 15px;
-        }
-
-        .nav-right {
-          display: none;
-        }
-
-        .hero {
-          padding-top: 35px;
-          min-height: auto;
-        }
-
-        h1 {
-          font-size: clamp(2.65rem, 13vw, 4.3rem);
-          letter-spacing: -1.4px;
-        }
-
-        h1 .line2 {
-          margin-left: 0;
-        }
-
-        .lede {
-          font-size: 0.9rem;
-          line-height: 1.7;
-        }
-
-        .portal-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .portal {
-          min-height: 220px;
-        }
-
-        .console-wrap {
-          min-height: 430px;
-        }
-
-        .orbit {
-          width: 340px;
-          height: 340px;
-        }
-
-        .network {
-          grid-template-columns: 1fr;
-        }
-
-        .features {
-          grid-template-columns: 1fr;
-        }
-
-        footer {
-          flex-direction: column;
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          transition: none !important;
-          animation: none !important;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <nav>
-      <a href="/" class="brand" aria-label="AttendX home">
-        <div class="logo-mark">A</div>
-        <div class="brand-text">Attend<span>X</span></div>
-      </a>
-
-      <div class="nav-right">
-        <div class="terminal-chip">
-          <span class="pulse-dot"></span>
-          REGISTER OPEN
+import React from 'react';
+import { 
+  ShieldCheck, 
+  QrCode, 
+  MapPin, 
+  Zap, 
+  ArrowUpRight, 
+  UserCheck, 
+  AlertTriangle, 
+  CheckCircle2, 
+  Lock,
+  Radio,
+  ExternalLink
+} from 'lucide-react';
+
+export default function AttendXLanding() {
+  return (
+    <div className="min-h-screen bg-[#090D0A] text-[#E8ECE7] font-sans antialiased relative overflow-hidden selection:bg-[#C5A044] selection:text-black">
+      {/* Background Subtle Grid Layer */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        style={{
+          backgroundImage: `linear-gradient(to right, #EEE8DA 1px, transparent 1px), linear-gradient(to bottom, #EEE8DA 1px, transparent 1px)`,
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)'
+        }}
+      />
+
+      {/* Top Header / Navigation */}
+      <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between relative z-10">
+        <a href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-full bg-[#C5A044] text-[#090D0A] font-serif font-bold text-lg flex items-center justify-center shadow-lg shadow-[#C5A044]/10 transition-transform group-hover:scale-105">
+            A
+          </div>
+          <span className="font-serif text-2xl font-medium tracking-tight text-[#EEE8DA]">
+            Attend<span className="text-[#963C2D]">X</span>
+          </span>
+        </a>
+
+        <div className="hidden sm:flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded border border-[#EEE8DA]/10 bg-[#131D17]/80 text-[#9AA698] font-mono text-xs tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-[#789776]" />
+            REGISTER OPEN
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded border border-[#EEE8DA]/10 bg-[#131D17]/80 text-[#9AA698] font-mono text-xs tracking-wider">
+            CAMPUS / REAL-TIME
+          </div>
         </div>
+      </header>
 
-        <div class="terminal-chip">
-          CAMPUS / REAL-TIME
-        </div>
-      </div>
-    </nav>
+      {/* Main Hero Section */}
+      <main className="max-w-7xl mx-auto px-6 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
+        
+        {/* Left Column: Copy & Portals */}
+        <section className="lg:col-span-7 space-y-8">
+          {/* Overline Badge */}
+          <div className="inline-flex items-center gap-2.5 px-3 py-1 rounded border border-[#C5A044]/30 bg-[#C5A044]/5 text-[#DFC36D] font-mono text-xs tracking-widest uppercase">
+            <span>ATTENDX</span>
+            <span className="opacity-40">//</span>
+            <b className="text-[#D69B8E] font-normal">VERIFIED RECORD OF PRESENCE</b>
+          </div>
 
-    <main class="hero">
-      <section class="copy">
-        <div class="overline">
-          <span>ATTENDX</span>
-          //
-          <b>A VERIFIED RECORD OF PRESENCE</b>
-        </div>
+          {/* Heading */}
+          <h1 className="font-serif text-5xl sm:text-6xl xl:text-7xl font-normal leading-[0.95] tracking-tight text-[#EEE8DA]">
+            Attendance, <br />
+            <span className="italic text-[#DFC36D]">stamped true.</span>
+          </h1>
 
-        <h1>
-          Attendance,<br />
-          <span class="line2">stamped true.</span>
-        </h1>
+          {/* Subtitle */}
+          <p className="text-[#9AA698] text-base sm:text-lg leading-relaxed max-w-2xl">
+            <strong className="text-[#EEE8DA] font-semibold">
+              Fast enough for a classroom. Rigorous enough for an institution.
+            </strong>{" "}
+            AttendX combines dynamic QR sessions, location verification, and live security telemetry into one unified workflow.
+          </p>
 
-        <p class="lede">
-          <strong>
-            Fast enough for a classroom. Rigorous enough for an institution.
-          </strong>
+          {/* Feature Badges */}
+          <div className="flex flex-wrap gap-2.5 font-mono text-xs">
+            <span className="px-3 py-1.5 rounded border border-[#C5A044]/20 bg-[#131D17] text-[#DFC36D]">
+              15s ROTATING TOKEN
+            </span>
+            <span className="px-3 py-1.5 rounded border border-[#963C2D]/30 bg-[#131D17] text-[#D69B8E]">
+              LIVE THREAT SIGNALS
+            </span>
+            <span className="px-3 py-1.5 rounded border border-[#789776]/30 bg-[#131D17] text-[#B4CDB0]">
+              ZERO HARDWARE REQUIRED
+            </span>
+          </div>
 
-          AttendX combines dynamic QR sessions, location verification, live
-          monitoring and security signals into one connected workflow — every
-          mark on the register backed by evidence.
-        </p>
-
-        <div class="badges">
-          <span class="badge brass">15s ROTATING TOKEN</span>
-          <span class="badge blood">LIVE THREAT SIGNALS</span>
-          <span class="badge sage">NO SPECIALIZED HARDWARE</span>
-        </div>
-
-        <!-- EXISTING LINKS PRESERVED -->
-
-        <div class="portal-grid">
-          <a href="/teacher.html" class="portal">
-            <div class="portal-head">
-              <div class="portal-icon">👨‍🏫</div>
-              <div class="portal-arrow">↗</div>
-            </div>
-
-            <h2>Teacher Command Center</h2>
-
-            <p>
-              Start sessions, display the live QR, watch attendance arrive and
-              react to security events in real time.
-            </p>
-
-            <div class="portal-meta">
-              <span>Enter workspace</span>
-              <span>Teacher →</span>
-            </div>
-          </a>
-
-          <a href="/student.html" class="portal blood">
-            <div class="portal-head">
-              <div class="portal-icon">🎓</div>
-              <div class="portal-arrow">↗</div>
-            </div>
-
-            <h2>Student Checkpoint</h2>
-
-            <p>
-              Scan the active QR, verify classroom presence and keep track of
-              your attendance and credibility history.
-            </p>
-
-            <div class="portal-meta">
-              <span>Start attendance</span>
-              <span>Student →</span>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <!-- STATIC SYSTEM PREVIEW -->
-      <section
-        class="console-wrap"
-        aria-label="AttendX system preview"
-      >
-        <div class="orbit"></div>
-
-        <div class="console">
-          <div class="console-top">
-            <div class="console-left">
-              <div class="dots">
-                <span></span>
-                <span></span>
-                <span></span>
+          {/* Portals Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+            {/* Teacher Card */}
+            <a
+              href="/teacher.html"
+              className="group relative p-6 rounded-xl border border-[#EEE8DA]/10 bg-gradient-to-b from-[#152018] to-[#0D1510] hover:border-[#C5A044]/40 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[220px]"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-11 h-11 rounded-full bg-[#C5A044]/10 border border-[#C5A044]/20 flex items-center justify-center text-xl">
+                    👨‍🏫
+                  </div>
+                  <div className="w-8 h-8 rounded-full border border-[#EEE8DA]/10 flex items-center justify-center text-[#9AA698] group-hover:text-[#EEE8DA] group-hover:border-[#C5A044]/40 transition-colors">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
+                </div>
+                <h2 className="font-serif text-xl font-medium text-[#EEE8DA] mb-2">
+                  Teacher Command Center
+                </h2>
+                <p className="text-[#9AA698] text-xs leading-relaxed">
+                  Start sessions, display dynamic live QRs, and monitor attendance security events in real time.
+                </p>
               </div>
+              <div className="pt-6 flex justify-between items-center font-mono text-[11px] text-[#DFC36D] tracking-wider uppercase border-t border-[#EEE8DA]/5">
+                <span>Enter workspace</span>
+                <span>Teacher →</span>
+              </div>
+            </a>
 
-              <div class="console-name">
-                attendx / command telemetry
+            {/* Student Card */}
+            <a
+              href="/student.html"
+              className="group relative p-6 rounded-xl border border-[#EEE8DA]/10 bg-gradient-to-b from-[#1B1A18] to-[#0D1510] hover:border-[#963C2D]/40 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[220px]"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-11 h-11 rounded-full bg-[#963C2D]/10 border border-[#963C2D]/20 flex items-center justify-center text-xl">
+                    🎓
+                  </div>
+                  <div className="w-8 h-8 rounded-full border border-[#EEE8DA]/10 flex items-center justify-center text-[#9AA698] group-hover:text-[#EEE8DA] group-hover:border-[#963C2D]/40 transition-colors">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
+                </div>
+                <h2 className="font-serif text-xl font-medium text-[#EEE8DA] mb-2">
+                  Student Checkpoint
+                </h2>
+                <p className="text-[#9AA698] text-xs leading-relaxed">
+                  Scan the active QR token, verify classroom presence, and track your attendance credibility.
+                </p>
+              </div>
+              <div className="pt-6 flex justify-between items-center font-mono text-[11px] text-[#D69B8E] tracking-wider uppercase border-t border-[#EEE8DA]/5">
+                <span>Start attendance</span>
+                <span>Student →</span>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        {/* Right Column: High-Tech Telemetry Preview */}
+        <section className="lg:col-span-5 relative flex justify-center">
+          {/* Static Ambient Accent Ring */}
+          <div className="absolute w-[440px] h-[440px] rounded-full border border-[#C5A044]/10 pointer-events-none hidden sm:block">
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#DFC36D] shadow-[0_0_12px_#DFC36D]" />
+          </div>
+
+          {/* Console Container */}
+          <div className="w-full max-w-md rounded-2xl border border-[#EEE8DA]/15 bg-gradient-to-b from-[#131D17] to-[#090D0A] shadow-2xl overflow-hidden relative z-10">
+            
+            {/* Console Header */}
+            <div className="px-5 py-3.5 border-b border-[#EEE8DA]/10 bg-[#FFFFFF]/[0.02] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#344036]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#344036]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#344036]" />
+                </div>
+                <span className="font-mono text-[10px] text-[#899688] tracking-widest uppercase">
+                  ATTENDX / TELEMETRY
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold text-[#B7CDB3]">
+                <Radio className="w-3 h-3 text-[#789776]" />
+                LIVE
               </div>
             </div>
 
-            <div class="live">
-              <i></i>
-              LIVE
+            {/* Console Content */}
+            <div className="p-6 space-y-4">
+              <div>
+                <span className="font-mono text-[10px] text-[#71806F] tracking-widest uppercase">
+                  ACTIVE SESSION
+                </span>
+                <div className="flex items-baseline justify-between mt-1">
+                  <h3 className="font-serif text-2xl font-medium text-[#EEE8DA]">
+                    CS101 · Section A
+                  </h3>
+                  <span className="font-mono text-xs text-[#7E8A7C]">
+                    SESSION 8F3A
+                  </span>
+                </div>
+              </div>
+
+              {/* Console Terminal Panel */}
+              <div className="p-3.5 rounded-lg border border-[#EEE8DA]/10 bg-black/40 font-mono text-xs space-y-1.5">
+                <div className="flex items-center gap-2 text-[#DFC36D]">
+                  <span className="text-[#899688]">$</span> session.start()
+                </div>
+                <div className="flex items-center gap-2 text-[#789776]">
+                  <span className="text-[#596657]">→</span> token.rotate: 00:14
+                </div>
+                <div className="flex items-center gap-2 text-[#789776]">
+                  <span className="text-[#596657]">→</span> geofence: VERIFIED
+                </div>
+                <div className="flex items-center gap-2 text-[#D58D7D]">
+                  <span className="text-[#596657]">→</span> threat-monitor: ARMED
+                </div>
+              </div>
+
+              {/* System Nodes Grid */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-3 rounded-lg border border-[#789776]/20 bg-white/[0.01]">
+                  <div className="font-mono text-[9px] text-[#71806F] uppercase tracking-wider">QR</div>
+                  <div className="font-serif text-sm font-semibold text-[#EEE8DA] mt-0.5">ACTIVE</div>
+                  <div className="text-[10px] text-[#879285]">Rotating</div>
+                </div>
+                <div className="p-3 rounded-lg border border-[#789776]/20 bg-white/[0.01]">
+                  <div className="font-mono text-[9px] text-[#71806F] uppercase tracking-wider">GPS</div>
+                  <div className="font-serif text-sm font-semibold text-[#EEE8DA] mt-0.5">LOCKED</div>
+                  <div className="text-[10px] text-[#879285]">Classroom</div>
+                </div>
+                <div className="p-3 rounded-lg border border-[#789776]/20 bg-white/[0.01]">
+                  <div className="font-mono text-[9px] text-[#71806F] uppercase tracking-wider">SYNC</div>
+                  <div className="font-serif text-sm font-semibold text-[#EEE8DA] mt-0.5">LIVE</div>
+                  <div className="text-[10px] text-[#879285]">Socket</div>
+                </div>
+              </div>
+
+              {/* Attendance Meter Card */}
+              <div className="p-4 rounded-xl border border-[#EEE8DA]/10 bg-white/[0.01] space-y-3">
+                <div className="flex justify-between items-center font-mono text-xs">
+                  <span className="text-[#7B8878] text-[10px] uppercase tracking-wider">
+                    Attendance Integrity
+                  </span>
+                  <span className="text-[#D6DFD0] font-bold">87%</span>
+                </div>
+                
+                {/* Meter Bar */}
+                <div className="h-2 rounded-full bg-[#182219] overflow-hidden p-0.5 border border-white/5">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-[#963C2D] via-[#C5A044] to-[#789776]" 
+                    style={{ width: '87%' }} 
+                  />
+                </div>
+
+                {/* Metrics Breakdown */}
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <div className="p-2 rounded border border-[#EEE8DA]/5 bg-white/[0.01]">
+                    <span className="font-mono text-[9px] text-[#71806F] block uppercase">Present</span>
+                    <strong className="font-serif text-base text-[#DFC36D]">48</strong>
+                  </div>
+                  <div className="p-2 rounded border border-[#EEE8DA]/5 bg-white/[0.01]">
+                    <span className="font-mono text-[9px] text-[#71806F] block uppercase">Alerts</span>
+                    <strong className="font-serif text-base text-[#D69B8E]">02</strong>
+                  </div>
+                  <div className="p-2 rounded border border-[#EEE8DA]/5 bg-white/[0.01]">
+                    <span className="font-mono text-[9px] text-[#71806F] block uppercase">Verified</span>
+                    <strong className="font-serif text-base text-[#B7D1B2]">46</strong>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Highlights Section */}
+      <section className="max-w-7xl mx-auto px-6 py-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl border border-[#EEE8DA]/10 bg-white/[0.01] flex items-center gap-3.5 hover:bg-white/[0.03] transition-colors">
+            <div className="w-9 h-9 rounded-full border border-[#EEE8DA]/10 flex items-center justify-center text-[#DFC36D] shrink-0">
+              <QrCode className="w-4 h-4" />
+            </div>
+            <div className="text-xs">
+              <strong className="text-[#EEE8DA] font-semibold block text-sm mb-0.5">Dynamic QR Tokens</strong>
+              <span className="text-[#9AA698]">Session keys rotate dynamically to avoid proxy scans</span>
             </div>
           </div>
 
-          <div class="console-body">
-            <div class="console-kicker">
-              ACTIVE SESSION
+          <div className="p-4 rounded-xl border border-[#EEE8DA]/10 bg-white/[0.01] flex items-center gap-3.5 hover:bg-white/[0.03] transition-colors">
+            <div className="w-9 h-9 rounded-full border border-[#EEE8DA]/10 flex items-center justify-center text-[#D69B8E] shrink-0">
+              <MapPin className="w-4 h-4" />
             </div>
-
-            <div class="console-title">
-              <h3>CS101 · Section A</h3>
-              <div class="session-id">
-                SESSION 8F3A
-              </div>
+            <div className="text-xs">
+              <strong className="text-[#EEE8DA] font-semibold block text-sm mb-0.5">Location Verification</strong>
+              <span className="text-[#9AA698]">Proximity geofencing checked server-side</span>
             </div>
+          </div>
 
-            <div class="terminal">
-              <div class="term-line">
-                <span class="term-prompt">$</span>
-                <span>session.start()</span>
-              </div>
-
-              <div class="term-line">
-                <span class="term-muted">→</span>
-                <span class="term-ok">
-                  token.rotate: 00:14
-                </span>
-              </div>
-
-              <div class="term-line">
-                <span class="term-muted">→</span>
-                <span class="term-ok">
-                  geofence: VERIFIED
-                </span>
-              </div>
-
-              <div class="term-line">
-                <span class="term-muted">→</span>
-                <span class="term-flag">
-                  threat-monitor: ARMED
-                </span>
-              </div>
+          <div className="p-4 rounded-xl border border-[#EEE8DA]/10 bg-white/[0.01] flex items-center gap-3.5 hover:bg-white/[0.03] transition-colors">
+            <div className="w-9 h-9 rounded-full border border-[#EEE8DA]/10 flex items-center justify-center text-[#B7D1B2] shrink-0">
+              <Zap className="w-4 h-4" />
             </div>
-
-            <div class="network">
-              <div class="node active">
-                <small>QR</small>
-                <strong>ACTIVE</strong>
-                <em>rotating token</em>
-              </div>
-
-              <div class="node active">
-                <small>GPS</small>
-                <strong>LOCKED</strong>
-                <em>classroom zone</em>
-              </div>
-
-              <div class="node active">
-                <small>SYNC</small>
-                <strong>LIVE</strong>
-                <em>teacher socket</em>
-              </div>
-            </div>
-
-            <div class="attendance">
-              <div class="attendance-top">
-                <span>
-                  Attendance integrity
-                </span>
-
-                <b>87%</b>
-              </div>
-
-              <div class="meter">
-                <div class="meter-fill"></div>
-              </div>
-
-              <div class="mini-metrics">
-                <div class="metric brass">
-                  <span>Present</span>
-                  <strong>48</strong>
-                </div>
-
-                <div class="metric blood">
-                  <span>Alerts</span>
-                  <strong>02</strong>
-                </div>
-
-                <div class="metric sage">
-                  <span>Verified</span>
-                  <strong>46</strong>
-                </div>
-              </div>
+            <div className="text-xs">
+              <strong className="text-[#EEE8DA] font-semibold block text-sm mb-0.5">Real-Time Event Stream</strong>
+              <span className="text-[#9AA698]">Teacher dashboard receives instant verification logs</span>
             </div>
           </div>
         </div>
       </section>
-    </main>
 
-    <section class="features">
-      <div class="feature">
-        <div class="feature-icon">◈</div>
-
-        <div>
-          <strong>Dynamic QR</strong>
-          · session tokens rotate continuously
+      {/* Footer */}
+      <footer className="max-w-7xl mx-auto px-6 py-8 border-t border-[#EEE8DA]/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#647063] relative z-10">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[#C5A044] text-[#090D0A] font-serif font-bold text-[10px] flex items-center justify-center">
+            A
+          </div>
+          <span>© 2026 AttendX · Smart Attendance System</span>
         </div>
-      </div>
-
-      <div class="feature">
-        <div class="feature-icon">⌖</div>
-
-        <div>
-          <strong>Location</strong>
-          · classroom proximity is checked server-side
-        </div>
-      </div>
-
-      <div class="feature">
-        <div class="feature-icon">⚡</div>
-
-        <div>
-          <strong>Real-time</strong>
-          · teacher dashboard receives live events
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <div class="footer-brand">
-        <div class="footer-mark">A</div>
-
-        <span>
-          © 2026 AttendX · Smart Attendance Management System
-        </span>
-      </div>
-
-      <span>
-        Built for faster, more accountable classrooms.
-      </span>
-    </footer>
-  </body>
-</html>
+        <span>Built for reliable, high-integrity classrooms.</span>
+      </footer>
+    </div>
+  );
+}
